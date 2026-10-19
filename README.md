@@ -2,84 +2,59 @@
 
 ## Project Overview
 
-This project documents a hands-on investigation of AWS account activity and network configuration using AWS CloudTrail, IAM, and Amazon VPC.
-
-The objective is to develop practical cloud security skills by reviewing management events, interpreting AWS service activity, identifying security observations, and documenting recommendations.
+This project documents a practical AWS security review using CloudTrail, IAM, and Amazon VPC. It demonstrates how to inspect management events, interpret AWS activity, review network configuration, and identify security improvements.
 
 ## Objectives
 
-- Investigate AWS management events using CloudTrail Event history.
-- Analyse IAM API calls and assumed-role activity.
-- Review VPC, subnet, route table, and internet gateway configuration.
-- Distinguish expected service activity from events requiring further investigation.
-- Document security findings and recommended remediation.
-- Evaluate options for extending the investigation into continuous security monitoring.
+- Investigate AWS CloudTrail management events.
+- Interpret event names, sources, identities, regions, and read-only status.
+- Inspect VPCs, subnets, route tables, and internet gateway configuration.
+- Review IAM security recommendations and service-linked roles.
+- Document findings and practical recommendations.
 
-## Environment
+## Tools Used
 
-- Cloud provider: Amazon Web Services (AWS)
-- Region: US East (N. Virginia), `us-east-1`
-- Event investigation: AWS CloudTrail Event history
-- Identity review: AWS Identity and Access Management (IAM)
-- Network review: Amazon Virtual Private Cloud (VPC)
+- AWS CloudTrail
+- AWS Identity and Access Management (IAM)
+- Amazon Virtual Private Cloud (VPC)
+- AWS Management Console
 
-## Investigations Performed
+## Activities Performed
 
-### 1. CloudTrail Event Analysis
+### CloudTrail Investigation
 
-Reviewed management events, including:
+Reviewed events including `DescribeVpcs`, `AutomatedDefaultVpcCreation`, `ListGroups`, `AssumeRole`, and `CreateView`.
 
-- `AutomatedDefaultVpcCreation`
-- `DescribeVpcs`
-- `ListGroups`
-- `AssumeRole`
-- `CreateView`
-- `SubscribeToURP`
+### Network Configuration Review
 
-### 2. IAM Activity
+Inspected the default VPC, six listed subnets, the main route table, and an attached internet gateway. The route table included an active default route to the internet gateway.
 
-Investigated IAM group discovery and role-assumption events associated with AWS Resource Explorer.
+An internet gateway alone does not prove that a workload is publicly accessible. Public exposure also depends on subnet settings, IP addressing, security groups, network ACLs, and other controls.
 
-The reviewed records identified AWS service-linked roles and read-only discovery operations consistent with Resource Explorer activity.
+### IAM Security Review
 
-### 3. VPC Configuration Review
+Reviewed IAM security recommendations and service-linked roles. The captured IAM dashboard recommended enabling MFA for the root user; this remains a documented improvement, not a completed remediation.
 
-Inspected the default VPC and its network configuration.
+## Findings and Recommendations
 
-Observations included:
+| Finding | Recommendation |
+|---|---|
+| Root-user MFA recommendation was displayed | Enable MFA and verify its status |
+| No trails were listed on the reviewed CloudTrail Trails page | Assess whether a persistent trail is required |
+| Default VPC has an internet gateway route | Review network exposure and access controls |
+| AWS service-generated events appear in event history | Validate event context before treating activity as suspicious |
 
-- The VPC was in the Available state.
-- Six subnets were listed for the VPC.
-- The main route table contained a local route and an active default route to an internet gateway.
-- The internet gateway was attached to the VPC.
+## Evidence
 
-An internet gateway route alone does not establish that a resource is publicly accessible. Public IP assignment, subnet routing, and security-group rules must also be assessed.
+See the `screenshots/` folder for selected evidence from the lab.
 
-### 4. Security Recommendations
+## Limitations
 
-- Enable multi-factor authentication (MFA) for the root user.
-- Continue reviewing management events for unexpected identity, network, and logging changes.
-- Investigate unfamiliar source addresses and role assumptions in context.
-- Avoid exposing access credentials or session tokens in screenshots and public repositories.
-- Review service costs before enabling additional monitoring features.
+This project documents the console evidence reviewed. It does not claim that automated alerts, GuardDuty detections, or a persistent multi-region trail were configured. The reviewed screenshots did not establish confirmed malicious activity.
 
-## Findings and Limitations
+## Future Improvements
 
-The investigations described above were based on the AWS Console evidence reviewed during the lab.
-
-No CloudTrail trail was configured during the documented investigation. The work therefore demonstrates retrospective event review, not continuous monitoring or automated alerting.
-
-GuardDuty was not enabled as part of the documented work.
-
-## Next Steps
-
-- Review and document additional security-relevant events.
-- Evaluate an appropriate logging and monitoring configuration.
-- Implement a controlled test and verify the resulting evidence.
-- Add sanitised screenshots and an investigation report.
-- Document any costs, limitations, and remediation steps.
-
-## Skills Demonstrated
-
-AWS CloudTrail · IAM · Amazon VPC · Cloud Security Fundamentals · Log Analysis · Security Investigation · Network Configuration Review · Technical Documentation
-This project uses an AWS account under the author's control for educational purposes. Findings reflect the configuration and events observed during the investigation and should not be interpreted as a complete security audit.
+- Complete root-user MFA setup.
+- Review billing and service access before enabling additional services.
+- Evaluate persistent CloudTrail logging and log protection.
+- Add a documented detection-and-response exercise.
